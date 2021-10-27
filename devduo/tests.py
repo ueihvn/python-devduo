@@ -37,16 +37,18 @@ def InitData():
     ]
 
     usersCreateParam = [
-        {"user_name": "user1", "email": "letronghieu30071@gmail.com",
-            "password": "password"},
-        {"user_name": "user2", "email": "letronghieu30072@gmail.com",
-            "password": "password"},
-        {"user_name": "user3", "email": "letronghieu30073@gmail.com",
-            "password": "password"},
-        {"user_name": "user4", "email": "letronghieu30074@gmail.com",
-            "password": "password"},
-        {"user_name": "user5", "email": "letronghieu30075@gmail.com",
-            "password": "password"},
+        {
+            "user_name": "user1",
+            "email": "letronghieu371@gmail.com",
+            "password": "password",
+            "gg_id": "1371",
+        },
+        {
+            "user_name": "user2",
+            "email": "letronghieu372@gmail.com",
+            "password": "password",
+            "gg_id": "2372",
+        },
     ]
 
     mentorsCreateParam = [
@@ -87,7 +89,8 @@ def InitData():
         u = User.objects.create(
             user_name=usersCreateParam[i]["user_name"],
             email=usersCreateParam[i]["email"],
-            password=usersCreateParam[i]["password"]
+            password=usersCreateParam[i]["password"],
+            gg_id=usersCreateParam[i]["gg_id"]
         )
         users.append(u)
 
@@ -112,7 +115,7 @@ def InitData():
         },
         {
             "mentor": 2,
-            "mentee": 3,
+            "mentee": 1,
             "duration": 2,
             "time_start": datetime.now(tz=timezone.utc)
         }

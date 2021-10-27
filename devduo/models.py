@@ -8,9 +8,11 @@ len_max = 10000
 
 class User(models.Model):
     full_name = models.CharField(max_length=len_medium)
-    email = models.EmailField(null=False, default='test@gmail.com')
+    email = models.EmailField(null=False, unique=True)
     user_name = models.CharField(
-        max_length=len_medium, unique=True, null=False)
+        max_length=len_medium, null=False, unique=True)
+    gg_id = models.CharField(max_length=len_medium,
+                             null=False, unique=True, default='gg_id')
     password = models.CharField(max_length=len_medium, null=False, default='1')
 
 
