@@ -7,12 +7,11 @@ len_max = 10000
 
 
 class User(models.Model):
-    full_name = models.CharField(max_length=len_medium)
-    email = models.EmailField(null=False, unique=True)
-    user_name = models.CharField(
-        max_length=len_medium, null=False, unique=True)
-    gg_id = models.CharField(max_length=len_medium,
-                             null=False, unique=True, default='gg_id')
+    email = models.EmailField(null=True, unique=True)
+    image = models.URLField(null=True)
+    money = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+    user_name = models.CharField(max_length=len_medium, null=True)
+    gg_id = models.CharField(max_length=len_medium, null=True, default='gg_id')
     password = models.CharField(max_length=len_medium, null=False, default='1')
 
 
@@ -25,13 +24,15 @@ class Field(models.Model):
 
 
 class Mentor(models.Model):
-    user_id = models.OneToOneField(User, unique=True, on_delete=models.PROTECT)
-    contact = models.JSONField(null=True)
-    description = models.TextField(max_length=len_medium)
+    user = models.OneToOneField(User, unique=True, on_delete=models.PROTECT)
+    full_name = models.CharField(max_length=len_medium, null=True)
+    thumbnail = models.URLField(null=True)
+    contacts = models.JSONField(null=True)
+    description = models.TextField(null=True, max_length=len_medium)
     price = models.FloatField(null=False, default=0)
     status = models.BooleanField(default=True)
-    fields = models.ManyToManyField(Field)
-    technologies = models.ManyToManyField(Technology)
+    fields = models.ManyToManyField(Field, null=True)
+    technologies = models.ManyToManyField(Technology, null=True)
 
 
 class Booking(models.Model):
@@ -39,14 +40,13 @@ class Booking(models.Model):
     mentee = models.ForeignKey(User, on_delete=PROTECT)
     mentor_time = models.DateTimeField(null=True)
     mentee_time = models.DateTimeField(null=True)
-    time_start = models.DateTimeField(null=True)
+    time_start = models.DateTimeField(null=True, auto_now_add=True)
     duration = models.PositiveSmallIntegerField(null=True)
 
     class Status(models.TextChoices):
-        PE = "pending"
         OG = "ongoing"
         FI = "finish"
         CA = "cancel"
 
     status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.PE)
+        max_length=10, choices=Status.choices, default=Status.OG)

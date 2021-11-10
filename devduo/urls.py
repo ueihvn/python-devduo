@@ -1,8 +1,17 @@
-from rest_framework import routers, urlpatterns
-from django.urls import include, path
+from django.urls import path
+
+from devduo.models import Field
 from . import views
 
 urlpatterns = [
-    path('users/', views.user_list),
-    path('users/<int:pk>', views.user_detail)
+    path('users', views.user_list),
+    path('users/<int:pk>', views.user_detail),
+    path('technologies', views.technology_list),
+    path('fields', views.field_list),
+    path('mentors', views.mentor_list),
+    path('mentors/<int:pk>', views.mentor_detail),
+    path('bookings', views.create_booking),
+    path('bookings/<int:pk>', views.booking_detail),
+    path('<int:user_id>/bookings/mentor', views.get_user_mentor),
+    path('<int:user_id>/bookings/mentee', views.get_user_mentee)
 ]

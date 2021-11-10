@@ -1,4 +1,5 @@
 from django.test import TestCase
+from devduo.crud import custom_sql, filterUserMentorMentee, getMentorResponse
 
 from devduo.models import Field, Mentor, Technology, User, Booking
 from datetime import datetime, timezone
@@ -15,6 +16,8 @@ def deleteInitData():
 
 
 # deleteInitData()
+
+# init data in database
 
 
 def InitData():
@@ -38,38 +41,43 @@ def InitData():
 
     usersCreateParam = [
         {
-            "user_name": "user1",
-            "email": "letronghieu371@gmail.com",
+            "user_name": "hoanglong040800",
+            "email": "hoanglong040800@gmail.com",
+            "image": "https://lh3.googleusercontent.com/a-/AOh14GiXJAU-PAHfIdxF9CvAOjzf8GA-fTpQhg1ObGzhaw=s96-c",
             "password": "password",
             "gg_id": "1371",
+            "money": 1000
         },
         {
-            "user_name": "user2",
-            "email": "letronghieu372@gmail.com",
+            "user_name": "u18520093",
+            "email": "18520093@gm.uit.edu.vn",
+            "image": "https://lh3.googleusercontent.com/a-/AOh14GgdTpsjVBfrdospm3eqFdiDIEy-JeT78PfDDfDQ=s96-c",
             "password": "password",
             "gg_id": "2372",
+            "money": 1000
         },
     ]
 
     mentorsCreateParam = [
         {
             "user_id": 1,
-            "contact": {
+            "contacts": {
                 "facebook": "http://linkfb.com",
                 "phone": "124312432134"
             },
-            "price": 10000
+            "price": 100
         },
         {
             "user_id": 2,
-            "contact": {
+            "contacts": {
                 "facebook": "http://linkfb.vn",
                 "phone": "11241234"
             },
-            "price": 20000
+            "price": 200
         }
     ]
 
+    # init fileds data
     fields = []
     for i in range(len(field_names)):
         f = Field.objects.create(
@@ -77,6 +85,7 @@ def InitData():
         )
         fields.append(f)
 
+    # init technologies data
     technologies = []
     for i in range(len(technology_names)):
         t = Technology.objects.create(
@@ -84,21 +93,25 @@ def InitData():
         )
         technologies.append(t)
 
+    # init users data
     users = []
     for i in range(len(usersCreateParam)):
         u = User.objects.create(
             user_name=usersCreateParam[i]["user_name"],
             email=usersCreateParam[i]["email"],
             password=usersCreateParam[i]["password"],
-            gg_id=usersCreateParam[i]["gg_id"]
+            gg_id=usersCreateParam[i]["gg_id"],
+            image=usersCreateParam[i]["image"],
+            money=usersCreateParam[i]["money"]
         )
         users.append(u)
 
+    # init mentors data
     mentors = []
     for i in range(len(mentorsCreateParam)):
         mentor = Mentor.objects.create(
-            user_id=users[mentorsCreateParam[i]["user_id"]-1],
-            contact=mentorsCreateParam[i]["contact"],
+            user=users[mentorsCreateParam[i]["user_id"]-1],
+            contacts=mentorsCreateParam[i]["contacts"],
             price=mentorsCreateParam[i]["price"]
         )
 
@@ -121,6 +134,7 @@ def InitData():
         }
     ]
 
+    # init booking data
     bookings = []
     for i in range(len(bookingsCreateParam)):
         booking = Booking.objects.create(
@@ -130,7 +144,12 @@ def InitData():
             time_start=bookingsCreateParam[i]["time_start"]
         )
     bookings.append(booking)
-    print(len(bookings))
 
 
-InitData()
+# InitData()
+
+# getMentorResponse(1)
+# custom_sql()
+bookings = filterUserMentorMentee(0, 'mentor')
+print(len(bookings))
+print(bookings)
