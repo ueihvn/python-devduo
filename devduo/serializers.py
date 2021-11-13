@@ -1,16 +1,16 @@
-from datetime import datetime
-from typing import Tuple
-from django.db.models.base import Model
+from typing import SupportsRound
+from django.db.models.fields import IntegerField
 from rest_framework import serializers
 
+from devduo.crud import custom_sql, get_mentor_booking_infor
+
 from .models import Booking, Field, Mentor, Technology, User
-from devduo import models
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'gg_id', 'email', 'user_name', 'image', 'money')
+        fields = ['id', 'gg_id', 'email', 'user_name', 'image', 'money']
 
 
 class TechnologySearializer(serializers.ModelSerializer):
@@ -25,40 +25,45 @@ class FieldSearializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MentorBookingInforSearializer(serializers.Serializer):
-    total_ongoing = serializers.IntegerField()
-    total_cancel = serializers.IntegerField()
-    total_mentee = serializers.IntegerField()
-
-    class Meta:
-        fields = ['total_ongoing', 'total_cancel', 'total_mentee']
-
-
 class CreateUpdateMentorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mentor
         fields = '__all__'
 
 
+class PatchMentorStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mentor
+        fields = ['status']
+
+
 class GetMentorSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     technologies = TechnologySearializer(many=True, read_only=True)
     fields = FieldSearializer(many=True, read_only=True)
+    bookings = serializers.SerializerMethodField()
 
     class Meta:
         model = Mentor
         fields = '__all__'
 
-
-# class GetMentorSerializerTest(serializers.Serializer):
-#     mentor = GetMentorSerializer()
-#     bookings = MentorBookingInforSearializer()
+    def get_bookings(self, obj):
+        ogs = get_mentor_booking_infor(obj.user.id, 'ongoing')
+        fis = get_mentor_booking_infor(obj.user.id, 'finish')
+        bookings = {
+            'bookings': {
+                'total_ongoing': ogs,
+                'total_finish': fis,
+            }
+        }
+        return bookings
 
 
 class CreateBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['mentor', 'mentee', 'duration', 'status']
+        fields = ['id', 'mentor', 'mentee', 'duration',
+                  'status', 'time_start', 'total_price']
 
 
 class BookingMenteeSerializer(serializers.ModelSerializer):

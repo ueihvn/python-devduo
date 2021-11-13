@@ -1,11 +1,14 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from rest_framework.decorators import api_view
-from rest_framework import status
+from rest_framework import status, generics, filters
 from rest_framework.response import Response
-
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db import transaction
+from decimal import Decimal
 from devduo.crud import filterUserMentorMentee
-from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, PatchBookingStatusSerializer, TechnologySearializer, UserSerializer
+from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, TechnologySearializer, UserSerializer
 from .models import Booking, Mentor, Technology, User, Field
+from .filters import MentorFilter
 
 
 # users
@@ -112,7 +115,7 @@ def mentor_detail(request, pk):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'PATCH':
-        serializer = CreateUpdateMentorSerializer(mentor, data=request.data)
+        serializer = PatchMentorStatusSerializer(mentor, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -122,20 +125,41 @@ def mentor_detail(request, pk):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
+class MentorSearch(generics.ListAPIView):
+    search_fields = ['full_name', 'description']
+    filter_backends = [filters.SearchFilter]
+    queryset = Mentor.objects.all()
+
+    serializer_class = GetMentorSerializer
+
+
 @api_view(['POST'])
+@transaction.atomic
 def create_booking(request):
     serializer = CreateBookingSerializer(data=request.data)
     if serializer.is_valid():
         try:
+            total_price = Decimal(serializer.validated_data.get('total_price'))
+            mentor = serializer.validated_data.get('mentor')
+            mentee = serializer.validated_data.get('mentee')
+            mentor_user = User.objects.get(pk=mentor.user.id)
+
+            # mentee = User.objects.get(pk=mentee_id)
+            # mentor = Mentor.objects.get(pk=mentor_id)
+            if mentor.status != True:
+                return Response({"message": "cannot book mentor status false"}, status=status.HTTP_400_BAD_REQUEST)
+            mentee.money = mentee.money - total_price
+            mentor_user.money = mentor_user.money + total_price
+            mentor.status = False
+
             serializer.save()
+            mentor.save()
+            mentor_user.save()
+            mentee.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e.__class__, e.__cause__)
             return Response(serializer.default_error_messages, status=status.HTTP_400_BAD_REQUEST)
-
-        print(serializer.data)
-        print(serializer.data.get("mentor"))
-        print(serializer.data.get("mentee"))
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -178,3 +202,10 @@ def get_user_mentee(request, user_id):
     bookings = filterUserMentorMentee(user_id, 'mentor')
     serializer = GetBookingSerializer(bookings, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MentorFilter(generics.ListAPIView):
+    queryset = Mentor.objects.all()
+    serializer_class = GetMentorSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MentorFilter

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from devduo.crud import custom_sql, filterUserMentorMentee, getMentorResponse
+from devduo.crud import custom_sql, filterUserMentorMentee, get_mentor_booking_infor, getMentorResponse
 
 from devduo.models import Field, Mentor, Technology, User, Booking
 from datetime import datetime, timezone
@@ -149,7 +149,9 @@ def InitData():
 # InitData()
 
 # getMentorResponse(1)
-# custom_sql()
-bookings = filterUserMentorMentee(0, 'mentor')
-print(len(bookings))
-print(bookings)
+# bookings = filterUserMentorMentee(0, 'mentor')
+# print(len(bookings))
+# print(bookings)
+
+res = get_mentor_booking_infor(2, 'ongoing')
+print(res[0])
