@@ -1,8 +1,6 @@
-from typing import SupportsRound
-from django.db.models.fields import IntegerField
 from rest_framework import serializers
 
-from devduo.crud import custom_sql, get_mentor_booking_infor
+from devduo.crud import get_mentor_booking_infor
 
 from .models import Booking, Field, Mentor, Technology, User
 
@@ -11,6 +9,18 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'gg_id', 'email', 'user_name', 'image', 'money']
+
+
+class PatchUserMoneySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['money']
+
+
+class PutUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['gg_id', 'email', 'user_name', 'image', 'password']
 
 
 class TechnologySearializer(serializers.ModelSerializer):
@@ -93,3 +103,7 @@ class PatchBookingStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = ['status']
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
