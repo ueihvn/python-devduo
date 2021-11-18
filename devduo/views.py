@@ -60,7 +60,7 @@ class UserDetailEngine(generics.GenericAPIView):
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = GetMentorSerializer(user)
+        serializer = UserSerializer(user)
         return Response(serializer.data)
 
     serializer_class = PutUserSerializer
