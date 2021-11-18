@@ -4,8 +4,6 @@ from rest_framework.decorators import api_view
 from rest_framework import status, generics, filters
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db import transaction
-from decimal import Decimal
 from devduo.crud import filterUserMentorMentee
 from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, TechnologySearializer, UserSerializer
 from .models import Booking, Mentor, Technology, User, Field
@@ -271,7 +269,7 @@ class MentorDetailEngine(generics.GenericAPIView):
 
 
 class MentorSearch(generics.ListAPIView):
-    search_fields = ['full_name', 'description']
+    search_fields = ['full_name']
     filter_backends = [filters.SearchFilter]
     queryset = Mentor.objects.all()
 
@@ -286,24 +284,24 @@ class CreateBookingEngine(generics.GenericAPIView):
         serializer = CreateBookingSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                total_price = Decimal(
-                    serializer.validated_data.get('total_price'))
-                mentor = serializer.validated_data.get('mentor')
-                mentee = serializer.validated_data.get('mentee')
-                mentor_user = User.objects.get(pk=mentor.user.id)
+                # total_price = Decimal(
+                #     serializer.validated_data.get('total_price'))
+                # mentor = serializer.validated_data.get('mentor')
+                # mentee = serializer.validated_data.get('mentee')
+                # mentor_user = User.objects.get(pk=mentor.user.id)
 
-                # mentee = User.objects.get(pk=mentee_id)
-                # mentor = Mentor.objects.get(pk=mentor_id)
-                if mentor.status != True:
-                    return Response({"message": "cannot book mentor status false"}, status=status.HTTP_400_BAD_REQUEST)
-                mentee.money = mentee.money - total_price
-                mentor_user.money = mentor_user.money + total_price
-                mentor.status = False
+                # # mentee = User.objects.get(pk=mentee_id)
+                # # mentor = Mentor.objects.get(pk=mentor_id)
+                # if mentor.status != True:
+                #     return Response({"message": "cannot book mentor status false"}, status=status.HTTP_400_BAD_REQUEST)
+                # mentee.money = mentee.money - total_price
+                # mentor_user.money = mentor_user.money + total_price
+                # mentor.status = False
 
                 serializer.save()
-                mentor.save()
-                mentor_user.save()
-                mentee.save()
+                # mentor.save()
+                # mentor_user.save()
+                # mentee.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 print(e.__class__, e.__cause__)
