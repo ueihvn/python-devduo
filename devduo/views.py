@@ -5,7 +5,7 @@ from rest_framework import status, generics, filters
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from devduo.crud import filterUserMentorMentee
-from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, TechnologySearializer, UserSerializer
+from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, TechnologySearializer, UpdateMentorSerializer, UserSerializer
 from .models import Booking, Mentor, Technology, User, Field
 from .filters import MentorFilter
 
@@ -203,7 +203,7 @@ class MentorDetailEngine(generics.GenericAPIView):
         serializer = GetMentorSerializer(mentor)
         return Response(serializer.data)
 
-    serializer_class = CreateUpdateMentorSerializer
+    serializer_class = UpdateMentorSerializer
 
     def put(self, request, *args, **kwargs):
         pk = request.path[request.path.rfind('/') + 1:]
@@ -211,7 +211,7 @@ class MentorDetailEngine(generics.GenericAPIView):
             mentor = Mentor.objects.get(pk=pk)
         except Mentor.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CreateUpdateMentorSerializer(mentor, data=request.data)
+        serializer = UpdateMentorSerializer(mentor, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

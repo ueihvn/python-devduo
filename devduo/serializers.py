@@ -41,6 +41,12 @@ class CreateUpdateMentorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UpdateMentorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mentor
+        exclude = ['user']
+
+
 class PatchMentorStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mentor
@@ -61,10 +67,8 @@ class GetMentorSerializer(serializers.ModelSerializer):
         ogs = get_mentor_booking_infor(obj.user.id, 'ongoing')
         fis = get_mentor_booking_infor(obj.user.id, 'finish')
         bookings = {
-            'bookings': {
-                'total_ongoing': ogs,
-                'total_finish': fis,
-            }
+            'total_ongoing': ogs,
+            'total_finish': fis,
         }
         return bookings
 

@@ -63,17 +63,19 @@ def InitData():
             "user_id": 1,
             "contacts": {
                 "facebook": "http://linkfb.com",
-                "phone": "124312432134"
             },
-            "price": 100
+            "full_name": "Tho Bay Mau",
+            "thumbnail": "https://i.ytimg.com/vi/IBaPZ4lELvI/maxresdefault.jpg",
+            "price": 10
         },
         {
             "user_id": 2,
             "contacts": {
                 "facebook": "http://linkfb.vn",
-                "phone": "11241234"
             },
-            "price": 200
+            "full_name": "ReactJS account",
+            "thumbnail": "https://codelearn.io/Upload/Blog/react-js-co-ban-phan-1-63738082145.3856.jpg",
+            "price": 5
         }
     ]
 
@@ -112,7 +114,9 @@ def InitData():
         mentor = Mentor.objects.create(
             user=users[mentorsCreateParam[i]["user_id"]-1],
             contacts=mentorsCreateParam[i]["contacts"],
-            price=mentorsCreateParam[i]["price"]
+            price=mentorsCreateParam[i]["price"],
+            full_name=mentorsCreateParam[i]["full_name"],
+            thumbnail=mentorsCreateParam[i]["thumbnail"]
         )
 
         mentor.fields.add(fields[i], fields[i+1])
@@ -146,12 +150,12 @@ def InitData():
     bookings.append(booking)
 
 
-# InitData()
+InitData()
 
 # getMentorResponse(1)
 # bookings = filterUserMentorMentee(0, 'mentor')
 # print(len(bookings))
 # print(bookings)
 
-res = get_mentor_booking_infor(2, 'ongoing')
-print(res[0])
+# res = get_mentor_booking_infor(2, 'ongoing')
+# print(res[0])
