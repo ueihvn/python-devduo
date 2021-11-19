@@ -48,8 +48,7 @@ class Booking(models.Model):
     mentee_time = models.DateTimeField(null=True)
     time_start = models.DateTimeField(null=True, auto_now_add=True)
     duration = models.PositiveSmallIntegerField(null=True)
-    total_price = models.DecimalField(
-        max_digits=6, decimal_places=2, default=0.00)
+    total_price = models.IntegerField(default=0)
 
     status = models.CharField(
         max_length=10, choices=Status.choices, default=Status.OG)
