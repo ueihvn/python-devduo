@@ -1,5 +1,6 @@
 from django.db.models import query
 from django.http import HttpResponse
+from django_filters.filters import OrderingFilter
 from rest_framework.decorators import api_view
 from rest_framework import status, generics, filters
 from rest_framework.response import Response
@@ -7,7 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from devduo.crud import filterUserMentorMentee
 from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, TechnologySearializer, UpdateMentorSerializer, UserSerializer
 from .models import Booking, Mentor, Technology, User, Field
-from .filters import MentorFilter
+from .filters import BookingFilterClass, MentorFilter
+from devduo import serializers
 
 
 # users
@@ -416,6 +418,13 @@ class MentorFilter(generics.ListAPIView):
     serializer_class = GetMentorSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = MentorFilter
+
+
+class BookingFilter(generics.ListAPIView):
+    queryset = Booking.objects.all().order_by('-id')
+    serializer_class = GetBookingSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = BookingFilterClass
 
 
 class LoginEngine(generics.GenericAPIView):

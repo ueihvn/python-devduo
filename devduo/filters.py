@@ -1,5 +1,5 @@
 import django_filters
-from .models import Field, Mentor, Technology
+from .models import Field, Mentor, Technology, Booking, User, Status
 
 
 class MentorFilter(django_filters.FilterSet):
@@ -33,3 +33,25 @@ class MentorFilter(django_filters.FilterSet):
     class Meta:
         model = Mentor
         fields = ['technologies', 'fields', 'status', 'price']
+
+
+class BookingFilterClass(django_filters.FilterSet):
+    mentor = django_filters.ModelChoiceFilter(
+        field_name='mentor',
+        to_field_name='id',
+        queryset=Mentor.objects.all()
+    )
+
+    mentee = django_filters.ModelChoiceFilter(
+        field_name='mentee',
+        to_field_name='id',
+        queryset=User.objects.all()
+    )
+
+    status = django_filters.CharFilter(
+        field_name='status',
+    )
+
+    class Meta:
+        model = Booking
+        fields = ['mentor', 'mentee', 'status']

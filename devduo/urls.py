@@ -27,6 +27,7 @@ urlpatterns = [
     path('mentors/filter', views.MentorFilter.as_view()),
     path('mentors/<int:pk>', views.MentorDetailEngine.as_view()),
     path('bookings', views.CreateBookingEngine.as_view()),
+    path('bookings/filter', views.BookingFilter.as_view()),
     path('bookings/<int:pk>', views.BookingDetailEngine.as_view()),
     path('<int:user_id>/bookings/mentor', views.get_user_mentor),
     path('<int:user_id>/bookings/mentee', views.get_user_mentee),

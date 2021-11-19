@@ -35,6 +35,12 @@ class Mentor(models.Model):
     technologies = models.ManyToManyField(Technology, null=True)
 
 
+class Status(models.TextChoices):
+    OG = "ongoing"
+    FI = "finish"
+    CA = "cancel"
+
+
 class Booking(models.Model):
     mentor = models.ForeignKey(Mentor, on_delete=PROTECT)
     mentee = models.ForeignKey(User, on_delete=PROTECT)
@@ -44,11 +50,6 @@ class Booking(models.Model):
     duration = models.PositiveSmallIntegerField(null=True)
     total_price = models.DecimalField(
         max_digits=6, decimal_places=2, default=0.00)
-
-    class Status(models.TextChoices):
-        OG = "ongoing"
-        FI = "finish"
-        CA = "cancel"
 
     status = models.CharField(
         max_length=10, choices=Status.choices, default=Status.OG)
