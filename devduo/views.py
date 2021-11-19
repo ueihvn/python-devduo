@@ -354,7 +354,9 @@ class BookingDetailEngine(generics.GenericAPIView):
         serializer = PatchBookingStatusSerializer(booking, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            bookingRes = Booking.objects.get(pk=int(number))
+            res = GetBookingSerializer(bookingRes)
+            return Response(res.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     serializer_class = GetBookingSerializer
