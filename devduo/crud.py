@@ -46,7 +46,7 @@ def get_mentor_booking_infor(mentorid, status):
 def filterUserMentorMentee(id, type):
     booking = []
     if type == 'mentor':
-        booking = Booking.objects.filter(mentor=id)
+        booking = Booking.objects.filter(mentor=id).order_by('-id')
     elif type == 'mentee':
-        booking = Booking.objects.filter(mentee=id)
+        booking = Booking.objects.filter(mentee=id).order_by('-id')
     return booking

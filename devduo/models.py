@@ -9,7 +9,7 @@ len_max = 10000
 class User(models.Model):
     email = models.EmailField(null=True, unique=True)
     image = models.URLField(null=True)
-    money = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    money = models.IntegerField(default=0)
     user_name = models.CharField(max_length=len_medium, null=True)
     gg_id = models.CharField(max_length=len_medium, null=True, default='gg_id')
     password = models.CharField(max_length=len_medium, null=False, default='1')
@@ -29,7 +29,7 @@ class Mentor(models.Model):
     thumbnail = models.URLField(null=True)
     contacts = models.JSONField(null=True)
     description = models.TextField(null=True, max_length=len_medium)
-    price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    price = models.IntegerField(default=0)
     status = models.BooleanField(default=True)
     fields = models.ManyToManyField(Field, null=True)
     technologies = models.ManyToManyField(Technology, null=True)
