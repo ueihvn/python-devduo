@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from devduo.crud import get_mentor_booking_infor
 
-from .models import Booking, Field, Mentor, Technology, User
+from .models import Booking, Field, Mentor, Rating, Technology, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -97,10 +97,15 @@ class BookingMentorSerialzer(serializers.ModelSerializer):
 class GetBookingSerializer(serializers.ModelSerializer):
     mentor = BookingMentorSerialzer(read_only=True)
     mentee = BookingMenteeSerializer(read_only=True)
+    is_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
         fields = '__all__'
+
+    def get_is_rating(self, obj):
+        rating = Rating.objects.filter(booking=obj.id)
+        return len(rating) != 0
 
 
 class PatchBookingStatusSerializer(serializers.ModelSerializer):
@@ -111,3 +116,18 @@ class PatchBookingStatusSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+
+class CreateRatingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Rating
+        fields = ['id', 'booking', 'rating', 'comment']
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    booking = GetBookingSerializer()
+
+    class Meta:
+        model = Rating
+        fields = ['id', 'booking', 'rating', 'comment']

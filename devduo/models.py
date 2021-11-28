@@ -1,3 +1,4 @@
+from re import T
 from django.db import models
 from django.db.models.deletion import PROTECT
 # Create your models here.
@@ -52,3 +53,9 @@ class Booking(models.Model):
 
     status = models.CharField(
         max_length=10, choices=Status.choices, default=Status.OG)
+
+
+class Rating(models.Model):
+    booking = models.OneToOneField(Booking, unique=True, on_delete=PROTECT)
+    rating = models.IntegerField(default=0)
+    comment = models.TextField(null=True)

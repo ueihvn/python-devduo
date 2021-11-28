@@ -6,10 +6,9 @@ from rest_framework import status, generics, filters
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from devduo.crud import filterUserMentorMentee
-from .serializers import CreateBookingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, TechnologySearializer, UpdateMentorSerializer, UserSerializer
-from .models import Booking, Mentor, Technology, User, Field
+from .serializers import CreateBookingSerializer, CreateRatingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, RatingSerializer, TechnologySearializer, UpdateMentorSerializer, UserSerializer
+from .models import Booking, Mentor, Technology, User, Field, Rating
 from .filters import BookingFilterClass, MentorFilter
-from devduo import serializers
 
 
 # users
@@ -372,6 +371,15 @@ class BookingDetailEngine(generics.GenericAPIView):
         serializer = GetBookingSerializer(booking)
         return Response(serializer.data)
 
+    def delete(self, request, *args, **kwargs):
+        pk = request.path[request.path.rfind('/') + 1:]
+        try:
+            booking = Booking.objects.get(pk=int(pk))
+        except Booking.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        booking.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
 
 # @api_view(['GET', 'PATCH'])
 # def booking_detail(request, pk):
@@ -471,3 +479,39 @@ class LoginEngine(generics.GenericAPIView):
 #             return Response(serializer.default_error_messages, status=status.HTTP_400_BAD_REQUEST)
 #     else:
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# users
+
+
+class RatingListEngine(generics.GenericAPIView):
+    serializer_class = RatingSerializer
+    queryset = Rating.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        ratings = Rating.objects.all()
+        serializer = RatingSerializer(ratings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    serializer_class = CreateRatingSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = CreateRatingSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+            except Exception as e:
+                print(e.__class__, e.__cause__)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_mentor_ratings(request, mentor_id):
+    try:
+        mentor = Mentor.objects.get(pk=mentor_id)
+    except Mentor.DoesNotExist:
+        return Response([], status=status.HTTP_404_NOT_FOUND)
+
+    ratings = Rating.objects.order_by('-id').filter(booking__mentor=mentor_id)
+    serializer = RatingSerializer(ratings, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

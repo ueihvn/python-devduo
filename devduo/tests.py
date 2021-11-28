@@ -1,7 +1,5 @@
-from django.test import TestCase
-from devduo.crud import custom_sql, filterUserMentorMentee, get_mentor_booking_infor, getMentorResponse
 
-from devduo.models import Field, Mentor, Technology, User, Booking
+from devduo.models import Field, Mentor, Technology, User, Booking, Rating
 from datetime import datetime, timezone
 
 # Create your tests here.
@@ -41,41 +39,127 @@ def InitData():
 
     usersCreateParam = [
         {
-            "user_name": "hoanglong040800",
+            "gg_id": "1234",
             "email": "hoanglong040800@gmail.com",
+            "user_name": "Long Tran",
             "image": "https://lh3.googleusercontent.com/a-/AOh14GiXJAU-PAHfIdxF9CvAOjzf8GA-fTpQhg1ObGzhaw=s96-c",
-            "password": "password",
-            "gg_id": "1371",
             "money": 1000
         },
+
         {
-            "user_name": "u18520093",
+            "gg_id": "4321",
             "email": "18520093@gm.uit.edu.vn",
-            "image": "https://lh3.googleusercontent.com/a-/AOh14GgdTpsjVBfrdospm3eqFdiDIEy-JeT78PfDDfDQ=s96-c",
-            "password": "password",
-            "gg_id": "2372",
-            "money": 1000
+            "user_name": "ReactJS Mastery",
+            "image": "https://codelearn.io/Upload/Blog/react-js-co-ban-phan-1-63738082145.3856.jpg",
+            "money": 500
         },
+
+        {
+            "gg_id": "4321",
+            "email": "user3@gmail.com",
+            "user_name": "Bill Gates",
+            "image": "https://vcdn-vnexpress.vnecdn.net/2021/05/17/c63e9e030f06b15d6f90eb4e7a8131-8418-7213-1621222868.jpg",
+            "money": 500
+        },
+
+        {
+            "gg_id": "4321",
+            "email": "user4@gmail.com",
+            "user_name": "Elon Musk",
+            "image": "https://vnn-imgs-a1.vgcloud.vn/icdn.dantri.com.vn/2021/06/14/elon-muskgetty-1623687014239.jpg",
+            "money": 500
+        },
+
+        {
+            "gg_id": "4321",
+            "email": "user5@gmail.com",
+            "user_name": "Jeff Bezos",
+            "image": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg",
+            "money": 500
+        },
+
+        {
+            "gg_id": "4321",
+            "email": "user6@gmail.com",
+            "user_name": "Mark Zuckerberg",
+            "image": "https://vnn-imgs-a1.vgcloud.vn/icdn.dantri.com.vn/2021/07/15/mark-zuckerberg-1626347263236.jpg",
+            "money": 500
+        }
     ]
 
     mentorsCreateParam = [
         {
             "user_id": 1,
             "contacts": {
-                "facebook": "http://linkfb.com",
+                "email": "joedoe@gmail.com",
+                "github": "https://github.com/joedoe",
+                "website": "https://joedoe.com",
+                "facebook": "https://facebook.com/?profile.id=123",
+                "linkedin": "https://linkedin.com/joedoe"
             },
-            "full_name": "Tho Bay Mau",
-            "thumbnail": "https://i.ytimg.com/vi/IBaPZ4lELvI/maxresdefault.jpg",
-            "price": 10
+            "full_name": "Long Tran",
+            "thumbnail": "https://lh3.googleusercontent.com/a-/AOh14GiXJAU-PAHfIdxF9CvAOjzf8GA-fTpQhg1ObGzhaw=s96-c",
+            "price": 100
         },
         {
             "user_id": 2,
             "contacts": {
-                "facebook": "http://linkfb.vn",
+                "github": "https://github.com/somebody",
+                "website": "https://somebodywebsite.com",
+                "facebook": "https://fb.com/somebody",
+                "linkedin": "https://linkedin.com/somebody"
             },
-            "full_name": "ReactJS account",
+            "full_name": "ReactJS Mastery",
             "thumbnail": "https://codelearn.io/Upload/Blog/react-js-co-ban-phan-1-63738082145.3856.jpg",
             "price": 5
+        },
+        {
+            "user_id": 3,
+            "contacts": {
+                "github": "https://github.com/somebody",
+                "website": "https://somebodywebsite.com",
+                "facebook": "https://fb.com/somebody",
+                "linkedin": "https://linkedin.com/somebody"
+            },
+            "full_name": "Bill Gates",
+            "thumbnail": "https://vcdn-vnexpress.vnecdn.net/2021/05/17/c63e9e030f06b15d6f90eb4e7a8131-8418-7213-1621222868.jpg",
+            "price": 250
+        },
+        {
+            "user_id": 4,
+            "contacts": {
+                "github": "https://github.com/somebody",
+                "website": "https://somebodywebsite.com",
+                "facebook": "https://fb.com/somebody",
+                "linkedin": "https://linkedin.com/somebody"
+            },
+            "full_name": "Elon Musk",
+            "thumbnail": "https://vnn-imgs-a1.vgcloud.vn/icdn.dantri.com.vn/2021/06/14/elon-muskgetty-1623687014239.jpg",
+            "price": 50
+        },
+        {
+            "user_id": 5,
+            "contacts": {
+                "github": "https://github.com/somebody",
+                "website": "https://somebodywebsite.com",
+                "facebook": "https://fb.com/somebody",
+                "linkedin": "https://linkedin.com/somebody"
+            },
+            "full_name": "Jeff Bezos",
+            "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg",
+            "price": 150
+        },
+        {
+            "user_id": 6,
+            "contacts": {
+                "github": "https://github.com/somebody",
+                "website": "https://somebodywebsite.com",
+                "facebook": "https://fb.com/somebody",
+                "linkedin": "https://linkedin.com/somebody"
+            },
+            "full_name": "Mark Zuckerberge",
+            "thumbnail": "https://vnn-imgs-a1.vgcloud.vn/icdn.dantri.com.vn/2021/07/15/mark-zuckerberg-1626347263236.jpg",
+            "price": 250
         }
     ]
 
@@ -101,7 +185,7 @@ def InitData():
         u = User.objects.create(
             user_name=usersCreateParam[i]["user_name"],
             email=usersCreateParam[i]["email"],
-            password=usersCreateParam[i]["password"],
+            # password=usersCreateParam[i]["password"],
             gg_id=usersCreateParam[i]["gg_id"],
             image=usersCreateParam[i]["image"],
             money=usersCreateParam[i]["money"]
@@ -119,8 +203,10 @@ def InitData():
             thumbnail=mentorsCreateParam[i]["thumbnail"]
         )
 
-        mentor.fields.add(fields[i], fields[i+1])
-        mentor.technologies.add(technologies[i], technologies[i+1])
+        mentor.fields.add(fields[i % len(fields)], fields[(
+            i+1) % len(fields)], fields[(i+2) % len(fields)])
+        mentor.technologies.add(
+            technologies[i % len(technologies)], technologies[(i+1) % len(technologies)], technologies[(i+2) % len(technologies)])
         mentors.append(mentor)
 
     bookingsCreateParam = [
@@ -128,26 +214,112 @@ def InitData():
             "mentor": 1,
             "mentee": 2,
             "duration": 2,
-            "time_start": datetime.now(tz=timezone.utc)
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "ongoing"
+        },
+        {
+            "mentor": 3,
+            "mentee": 4,
+            "duration": 2,
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "ongoing"
+        },
+        {
+            "mentor": 5,
+            "mentee": 6,
+            "duration": 3,
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "ongoing"
+        },
+        {
+            "mentor": 1,
+            "mentee": 6,
+            "duration": 1,
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "ongoing"
         },
         {
             "mentor": 2,
-            "mentee": 1,
+            "mentee": 4,
+            "duration": 3,
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "finish"
+        },
+        {
+            "mentor": 5,
+            "mentee": 6,
             "duration": 2,
-            "time_start": datetime.now(tz=timezone.utc)
-        }
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "finish"
+        },
+        {
+            "mentor": 1,
+            "mentee": 5,
+            "duration": 3,
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "finish"
+        },
+        {
+            "mentor": 4,
+            "mentee": 6,
+            "duration": 2,
+            "time_start": datetime.now(tz=timezone.utc),
+            "status": "finish"
+        },
     ]
 
     # init booking data
     bookings = []
     for i in range(len(bookingsCreateParam)):
-        booking = Booking.objects.create(
-            mentor=mentors[bookingsCreateParam[i]["mentor"]-1],
-            mentee=users[bookingsCreateParam[i]["mentee"]-1],
-            duration=bookingsCreateParam[i]["duration"],
-            time_start=bookingsCreateParam[i]["time_start"]
+        if bookingsCreateParam[i]["status"] != None:
+            booking = Booking.objects.create(
+                mentor=mentors[bookingsCreateParam[i]["mentor"]-1],
+                mentee=users[bookingsCreateParam[i]["mentee"]-1],
+                duration=bookingsCreateParam[i]["duration"],
+                time_start=bookingsCreateParam[i]["time_start"],
+                status=bookingsCreateParam[i]["status"],
+            )
+            bookings.append(booking)
+        else:
+            booking = Booking.objects.create(
+                mentor=mentors[bookingsCreateParam[i]["mentor"]-1],
+                mentee=users[bookingsCreateParam[i]["mentee"]-1],
+                duration=bookingsCreateParam[i]["duration"],
+                time_start=bookingsCreateParam[i]["time_start"]
+            )
+            bookings.append(booking)
+
+    # init rating data
+    ratingCreateParam = [
+        {
+            "booking": 5,
+            "rating": 1,
+            "comment": "ko duoc ti nao"
+        },
+        {
+            "booking": 6,
+            "rating": 4,
+            "comment": "day co tam"
+        },
+        {
+            "booking": 7,
+            "rating": 5,
+            "comment": "qua tuyet voi"
+        },
+        {
+            "booking": 8,
+            "rating": 3,
+            "comment": "tam duoc"
+        },
+    ]
+    ratings = []
+    for i in range(len(ratingCreateParam)):
+        rating = Rating.objects.create(
+            booking=bookings[ratingCreateParam[i]["booking"]-1],
+            rating=ratingCreateParam[i]["rating"],
+            comment=ratingCreateParam[i]["comment"],
         )
-    bookings.append(booking)
+        ratings.append(rating)
 
 
 InitData()
@@ -159,3 +331,7 @@ InitData()
 
 # res = get_mentor_booking_infor(2, 'ongoing')
 # print(res[0])
+
+# ratings = Rating.objects.order_by(
+#     '-id').filter(booking__mentor=1)
+# print(ratings)
