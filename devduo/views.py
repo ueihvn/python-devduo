@@ -6,7 +6,7 @@ from rest_framework import status, generics, filters
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from devduo.crud import filterUserMentorMentee
-from .serializers import CreateBookingSerializer, CreateRatingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, RatingSerializer, TechnologySearializer, UpdateMentorSerializer, UserSerializer
+from .serializers import CreateBookingSerializer, CreateRatingSerializer, CreateUpdateMentorSerializer, FieldSearializer, GetBookingSerializer, GetMentorSerializer, LoginSerializer, PatchBookingStatusSerializer, PatchMentorStatusSerializer, PatchUserMoneySerializer, PutUserSerializer, RatingSerializer, TechnologySearializer, UpdateMentorSerializer, UpdateRatingSerializer, UserSerializer
 from .models import Booking, Mentor, Technology, User, Field, Rating
 from .filters import BookingFilterClass, MentorFilter
 
@@ -503,6 +503,42 @@ class RatingListEngine(generics.GenericAPIView):
                 print(e.__class__, e.__cause__)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RatingDetailEngine(generics.GenericAPIView):
+    serializer_class = RatingSerializer
+    queryset = Rating.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        ratings = Rating.objects.all()
+        serializer = RatingSerializer(ratings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    serializer_class = CreateRatingSerializer
+
+    def put(self, request, *args, **kwargs):
+        pk = request.path[request.path.rfind('/') + 1:]
+        try:
+            rating = Rating.objects.get(pk=int(pk))
+        except Rating.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UpdateRatingSerializer(rating, data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+            except Exception as e:
+                print(e.__class__, e.__cause__)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        pk = request.path[request.path.rfind('/') + 1:]
+        try:
+            rating = Rating.objects.get(pk=int(pk))
+        except Rating.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        rating.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])

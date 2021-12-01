@@ -1,3 +1,4 @@
+from re import T
 from rest_framework import serializers
 
 from devduo.crud import get_mentor_booking_infor
@@ -123,6 +124,14 @@ class CreateRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = ['id', 'booking', 'rating', 'comment']
+
+
+class UpdateRatingSerializer(serializers.ModelSerializer):
+    booking = GetBookingSerializer(read_only=True)
+
+    class Meta:
+        model = Rating
+        fields = ['id', 'rating', 'comment', 'booking']
 
 
 class RatingSerializer(serializers.ModelSerializer):
